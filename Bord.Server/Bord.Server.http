@@ -1,0 +1,6 @@
+@Bord.Server_HostAddress = http://localhost:5022
+
+GET {{Bord.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
