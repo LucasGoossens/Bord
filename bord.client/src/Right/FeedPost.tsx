@@ -1,10 +1,16 @@
-interface FeedPostProps {
+type User = {
+    id: number,
     name: string,
-    display: string,
-    content: string, 
-}
+    display: string,    
+};
 
-function FeedPost(props:FeedPostProps) {
+type FeedProps = {
+    user: User;
+    content:string
+};
+
+
+function FeedPost({ user, content }: FeedProps) {
     return (
         <div className="relative grid grid-cols-[10%_90%] border min-h-24 h-fit border-slate-700">
             <div className="flex items-start pt-5 justify-center">
@@ -14,10 +20,10 @@ function FeedPost(props:FeedPostProps) {
                 />
             </div>
             <div className="p-3 overflow-hidden break-words">
-                <div className="font-bold text-md flex flex-row">{props.name }
-                    <div className="italic px-1 font-sm text-sm text-slate-400">@{props.display}</div>
+                <div className="font-bold text-md flex flex-row">{user.name }
+                    <div className="italic px-1 font-sm text-sm text-slate-400">@{user.display}</div>
                     </div>
-                <div>{props.content}</div>
+                <div>{content}</div>
                 <div className="flex justify-between border-t border-slate-600 w-full my-1">
                     <button className="text-sm border border-slate-600 mt-2 rounded-full px-2 hover:bg-slate-500">O</button>
                     <button className="text-sm border border-slate-600 mt-2 rounded-full px-2 hover:bg-slate-500">U</button>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import ThreadModal from './ThreadModal';
-interface ThreadProps {
+interface ThreadProps {    
     title: string,
     content: string,
     imgUrl: string

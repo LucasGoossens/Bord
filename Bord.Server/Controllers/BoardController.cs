@@ -23,7 +23,23 @@ namespace Bord.Server.Controllers
             {
                 return BadRequest();
             }
-            
+
+        }
+
+        [HttpGet]
+        [Route("/board/all")]
+        public IActionResult GetAllBoards()
+        {
+            BoardDAL boardDAL = new BoardDAL();
+            return Ok(boardDAL.GetAllBoards());
+        }
+
+        [HttpGet]
+        [Route("/board/{id}")]
+        public IActionResult GetThreadsByBoardId(int id)
+        {
+            ThreadDAL threadDAL = new ThreadDAL();
+            return Ok(threadDAL.GetAllThreadsByBoardId(id));
         }
 
     }
