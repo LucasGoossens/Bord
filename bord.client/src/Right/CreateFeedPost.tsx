@@ -1,36 +1,21 @@
-import React from 'react';
-interface CreateThreadModalProps {
-    open: boolean;
-    onClose: () => void;
-    boardId: number;
-}
+function CreateFeedPost({ open, onClose }) {
 
-
-function CreateThread({ open, onClose, boardId }: CreateThreadModalProps) {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-
-        console.log(JSON.stringify({
-            title: formData.get("title"),
-            content: formData.get("content"),
-            boardId: boardId,
-            creatorId: 1 // placeholder
-        }))
-
-
-        fetch("https://localhost:7014/thread/create", {
+        console.log("Creating post", formData.get("content"));
+        console.log("Creator", JSON.parse(localStorage.getItem('user')).id)
+        
+        fetch("https://localhost:7014/feed/create", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                title: formData.get("title"),
-                content: formData.get("content"),
-                boardId: boardId,
+            body: JSON.stringify({        
+                postcontent: formData.get("content"),                
                 creatorId: JSON.parse(localStorage.getItem('user')).id
             })
         })
@@ -47,13 +32,9 @@ function CreateThread({ open, onClose, boardId }: CreateThreadModalProps) {
             <div onClick={onClose} className={`text-white z-50 fixed inset-0 flex justify-center items-center ${open ? 'visible bg-black/70' : 'invisible'}`}>
                 <div className="w-1/4 flex m-2 justify-center relative bg-slate-600 p-4 rounded shadow-lg" onClick={(e) => e.stopPropagation()}>
                     <button onClick={onClose} className="absolute right-2 top-2 px-2 py-1 bg-red-600 rounded hover:bg-red-500">Close</button>
-                    <form onSubmit={handleSubmit}>
-                        <label className="mx-2">
-                            Title <br />
-                            <input name="title" className="h-6 mx-2 w-24 bg-slate-500 text-white" required />
-                        </label><br />
+                    <form onSubmit={handleSubmit}>                       
                         <label >
-                            OP<br />
+                            Content<br />
                             <textarea
                                 name="content"
                                 className="h-40 w-96 bg-slate-500 text-white p-2 max-h-96"
@@ -67,7 +48,6 @@ function CreateThread({ open, onClose, boardId }: CreateThreadModalProps) {
             </div>
         </>
     );
-
 }
 
-export default CreateThread;
+export default CreateFeedPost;

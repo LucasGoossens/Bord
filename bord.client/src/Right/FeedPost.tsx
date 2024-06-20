@@ -1,12 +1,13 @@
 type User = {
     id: number,
     name: string,
-    display: string,    
+    display: string,
+    
 };
 
 type FeedProps = {
     user: User;
-    content:string
+    content: string
 };
 
 
@@ -20,9 +21,9 @@ function FeedPost({ user, content }: FeedProps) {
                 />
             </div>
             <div className="p-3 overflow-hidden break-words">
-                <div className="font-bold text-md flex flex-row">{user.name }
+                <div className="font-bold text-md flex flex-row">{user.name}
                     <div className="italic px-1 font-sm text-sm text-slate-400">@{user.display}</div>
-                    </div>
+                </div>
                 <div>{content}</div>
                 <div className="flex justify-between border-t border-slate-600 w-full my-1">
                     <button className="text-sm border border-slate-600 mt-2 rounded-full px-2 hover:bg-slate-500">O</button>

@@ -11,6 +11,7 @@
   <ItemGroup>
     <Folder Include="src\assets\" />
     <Folder Include="src\Left\" />
+    <Folder Include="src\Main\" />
     <Folder Include="src\Right\" />
   </ItemGroup>
 </Project>

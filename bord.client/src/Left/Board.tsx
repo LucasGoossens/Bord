@@ -5,64 +5,67 @@ function Board({ children, boardId }) {
     const [threadArr, setThreadArr] = useState([]);
     const [imgUrls, setImgUrls] = useState<string[]>([]);
 
-    useEffect(() => {
-        const fetchThreads = async () => {
-            if (boardId === 0) {
-                console.log("boardId == 0");
+
+    const fetchThreads = async () => {
+        if (boardId === 0) {
+            console.log("boardId == 0");
+            return;
+        }
+
+        console.log("Fetching threads for board:", boardId);
+
+        try {
+            const response = await fetch(`https://localhost:7014/board/${boardId}`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                console.error("Failed to fetch board data:", response);
                 return;
             }
 
-            console.log("Fetching threads for board:", boardId);
+            const data = await response.json();
+            console.log("Board log:", data);
 
-            try {
-                const response = await fetch(`https://localhost:7014/board/${boardId}`, {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok) {
-                    console.error("Failed to fetch board data:", response);
-                    return;
-                }
-
-                const data = await response.json();
-                console.log("Board log:", data);
-
-                if (!data) {
-                    console.log(".");
-                    return;
-                }
-
-                setThreadArr(data);
-            } catch (error) {
-                console.error("Error fetching boards:", error);
+            if (!data) {
+                console.log(".");
+                return;
             }
-        };
 
-        fetchThreads();
-    }, [boardId]);
+            setThreadArr(data);
+        } catch (error) {
+            console.error("Error fetching boards:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchImageUrls = async () => {
-            try {
-                const response = await fetch("https://picsum.photos/v2/list");
-                if (response.ok) {
-                    const data = await response.json();
-                    const urls = data.slice(0, threadArr.length).map(item => item.download_url);
-                    setImgUrls(urls);
-                } else {
-                    console.error("Failed to fetch image URLs:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Error fetching image URLs:", error);
-            }
-        };
+        fetchThreads();
+    }, [boardId]); // hier niet threadArr aan toevoegen = infinite loop
+    
 
+
+    const fetchImageUrls = async () => {
+        try {
+            const response = await fetch("https://picsum.photos/v2/list");
+            if (response.ok) {
+                const data = await response.json();
+                const urls = data.slice(0, threadArr.length).map(item => item.download_url);
+                setImgUrls(urls);
+            } else {
+                console.error("Failed to fetch image URLs:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching image URLs:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchImageUrls();
-    }, [threadArr.length]); // Depend on threadArr.length to trigger fetching new image URLs
+    }, [threadArr])
 
     return (
         <div className="scrollbar-thin h-screen flex flex-row justify-evenly flex-wrap w-2/3 border-r-2 border-slate-700 border-inset bg-slate-800 overflow-y-scroll">

@@ -11,18 +11,17 @@ namespace Bord.Server.DataAccessLayer
         {
             public void CreateBoard(Board board)
             {
-                string query = "INSERT INTO Board (name) VALUES (@name);";
-                System.Diagnostics.Debug.WriteLine(board.Name);
+                string query = "INSERT INTO Board (name, creatorId) VALUES (@name, @creatorId);";
                 try
                 {
                     using (SqlConnection connection = new SqlConnection(connStr))
                     {
-                        System.Diagnostics.Debug.WriteLine(board.Name);
                         connection.Open();
 
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
                             command.Parameters.AddWithValue("@name", board.Name);
+                            command.Parameters.AddWithValue("@creatorId", board.CreatorId);
                             command.ExecuteNonQuery();
                         }
                     }
@@ -65,7 +64,7 @@ namespace Bord.Server.DataAccessLayer
                     System.Diagnostics.Debug.WriteLine("Failed to get boards: " + ex.Message);
                     return null;
                 }
-                
+
             }
         }
 
@@ -74,7 +73,14 @@ namespace Bord.Server.DataAccessLayer
         {
             public void CreateUser(User user)
             {
-                string query = "INSERT INTO User (name, display) VALUES (@name, @display);";
+                // check if display name already exists
+                if (ValidateRegistration(user))
+                {
+                    System.Diagnostics.Debug.WriteLine("User already exists");
+                    return;
+                }
+
+                string query = "INSERT INTO [User] (name, password, display) VALUES (@name, @password, @display);";
                 System.Diagnostics.Debug.WriteLine(user.Name);
                 try
                 {
@@ -86,6 +92,7 @@ namespace Bord.Server.DataAccessLayer
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
                             command.Parameters.AddWithValue("@name", user.Name);
+                            command.Parameters.AddWithValue("@password", user.Password);
                             command.Parameters.AddWithValue("@display", user.Display);
                             command.ExecuteNonQuery();
                         }
@@ -93,8 +100,75 @@ namespace Bord.Server.DataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine("Failed to create new user: " + ex.Message);
+                    System.Diagnostics.Debug.WriteLine("Failed to create new user: " + ex.StackTrace);
                 }
+            }
+
+            public User ValidateLogin(User user)
+            {
+                string query = $"SELECT * FROM [User] WHERE name = @name AND password = @password;";
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@name", user.Name);
+                            command.Parameters.AddWithValue("@password", user.Password);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    user.Id = reader.GetInt32(0);
+                                    user.Name = reader.GetString(1);
+                                    user.Display = reader.GetString(2);
+                                    // andere info nog
+                                    return user;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to validate login: " + ex.Message);
+                    return null;
+                }
+                return null;
+            }
+
+            public bool ValidateRegistration(User user)
+            {
+                string query = $"SELECT * FROM [User] WHERE name = @name";
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@name", user.Name);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    return true;
+                                    //user.Id = reader.GetInt32(0);
+                                    //user.Display = reader.GetString(2);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to validate registration: " + ex.Message);
+                    return false;
+                }
+                return false;
             }
         }
 
@@ -169,6 +243,69 @@ namespace Bord.Server.DataAccessLayer
             }
         }
 
+        public class FeedDAL
+        {
+            public void CreateFeedPost(FeedPost feedpost)
+            {
+                string query = "INSERT INTO FeedPost (creatorId, postcontent) VALUES (@creatorId, @postcontent);";
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
 
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@creatorId", feedpost.CreatorId);
+                            command.Parameters.AddWithValue("@postcontent", feedpost.PostContent);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to create new feedpost: " + ex.Message);
+                }
+            }
+
+            public List<FeedPost> GetFeedById(int creatorId)
+            {
+                string query = "SELECT * FROM FeedPost WHERE creatorId = @creatorId;";
+                List<FeedPost> feedposts = new List<FeedPost>();
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@creatorId", creatorId);
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    FeedPost feedpost = new FeedPost();
+                                    feedpost.Id = reader.GetInt32(0);
+                                    feedpost.CreatorId = reader.GetInt32(1);
+                                    feedpost.PostContent = reader.GetString(2);
+                                    feedposts.Add(feedpost);
+                                }
+                            }
+                        }
+                    }
+                    return feedposts;
+                }
+
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to get feedposts: " + ex.Message);
+                    return null;
+                }
+            }
+
+
+        }
     }
 }

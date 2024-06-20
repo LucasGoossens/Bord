@@ -11,9 +11,25 @@ namespace Bord.Server.Controllers
         [Route("/user/create")]
         public IActionResult CreateUser([FromBody] User user)
         {
+            //System.Diagnostics.Debug.WriteLine("hello");
             UserDAL userDAL = new UserDAL();
             userDAL.CreateUser(user);
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("/user/login")]
+        
+        public IActionResult LoginUser([FromBody] User user)
+        {          
+            UserDAL userDAL = new UserDAL();
+            User loggedInUser = userDAL.ValidateLogin(user);
+            if (loggedInUser != null)
+            {
+                System.Diagnostics.Debug.WriteLine(loggedInUser.Name);
+                return Ok(loggedInUser);
+            }
+            return BadRequest();
         }
     }
 }

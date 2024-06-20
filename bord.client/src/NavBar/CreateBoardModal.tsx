@@ -1,4 +1,5 @@
 import React from 'react';
+import { Form } from 'react-router-dom';
 
 interface CreateBoardModalProps {
     open: boolean;
@@ -19,7 +20,7 @@ const CreateBoardModal: React.FC<CreateBoardModalProps> = ({ open, onClose }) =>
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name: formData.get('name') })
+            body: JSON.stringify({ name: formData.get('name'), creatorId: JSON.parse(localStorage.getItem('user')).id})
         })
             .then(onClose())
             .catch(error => {

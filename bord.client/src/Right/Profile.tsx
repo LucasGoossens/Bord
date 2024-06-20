@@ -14,11 +14,11 @@ function Profile({ user }: ProfileProps) {
             <div className="w-full border border-gray-700 bg-slate-700 h-1/3">
 
             </div>
-            {/*<img className="w-full border border-gray-700 h-1/3" src="https://fastly.picsum.photos/id/11/2500/1667.jpg?hmac=xxjFJtAPgshYkysU_aqx2sZir-kIOjNR9vx0te7GycQ" />*/}
+            <img className="w-full border border-gray-700 h-1/3" src="https://fastly.picsum.photos/id/11/2500/1667.jpg?hmac=xxjFJtAPgshYkysU_aqx2sZir-kIOjNR9vx0te7GycQ" />
             <img className="absolute left-4 top-7 w-32 h-32 rounded-full content-center border border-slate-600 border-2" src="https://fastly.picsum.photos/id/11/2500/1667.jpg?hmac=xxjFJtAPgshYkysU_aqx2sZir-kIOjNR9vx0te7GycQ" />
             <div className="w-full border border-gray-700 bg-slate-900 px-8 pt-10 h-2/3">
-                <div className="font-bold">{user.name}</div>
-                <div className="italic text-slate-400">@{user.display}</div>
+                <div className="font-bold">{user.display}</div>
+                <div className="italic text-slate-400">@{user.name}</div>
                 <div className="py-5">Description or bio lorem etc etc ec</div>
                 <div className="flex flex-row">
                     <div className="px-1 pt-2 text-sm font-bold hover:text-sky-500">Following 999</div>

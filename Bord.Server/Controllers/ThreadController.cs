@@ -9,10 +9,7 @@ namespace Bord.Server.Controllers
         [HttpPost]
         [Route("/thread/create")]
         public IActionResult createThread([FromBody] Models.Thread thread)
-        {
-                
-            System.Diagnostics.Debug.WriteLine(thread);
-            System.Diagnostics.Debug.WriteLine("testsdf.");
+        {                         
             try
             {
                 ThreadDAL threadDAL = new ThreadDAL();

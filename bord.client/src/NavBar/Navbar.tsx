@@ -33,16 +33,16 @@ function Navbar({ currentBoardId, allBoards, setBoard }) {
                 {bigNav &&
                     <>
                     <button className="border border-slate rounded mx-1" onClick={openCreateBoardModal}>Create New Board</button>
-                    <button className="border border-slate rounded mx-1" onClick={openCreateThreadModal}>Create New Thread</button>
+                    {currentBoardId != 0 && <button className="border border-slate rounded mx-1" onClick={openCreateThreadModal}>Create New Thread</button>}
                     <button className="border border-slate rounded mx-1" onClick={openSelectBoardModal}>Select Board</button>
-
+                    <button onClick={() => { localStorage.removeItem('user'); location.reload(); }} className="border border-slate rounded mx-1" >Log out</button>
                     </>
                 }
              
                 <CreateBoardModal open={createBoardModal} onClose={() => setCreateBoardModal(false)} />
                 <CreateThread open={createThreadModal} onClose={() => setCreateThreadModal(false)} boardId={currentBoardId} />
                 <SelectBoardModal open={selectBoardModal} onClose={() => setSelectBoardModal(false)} allBoards={allBoards} setBoard={setBoard} />
-
+                
             </div>
         </>
     );
