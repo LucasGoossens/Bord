@@ -104,6 +104,40 @@ namespace Bord.Server.DataAccessLayer
                 }
             }
 
+            public User GetUserById(int userId)
+            {
+                string query = $"SELECT * FROM [User] WHERE id = @userId;";
+                User user = new User();
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@userId", userId);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    user.Id = reader.GetInt32(0);
+                                    user.Name = reader.GetString(1);
+                                    user.Display = reader.GetString(2);
+                                    // andere info nog
+                                }
+                            }
+                        }
+                    }
+                    return user;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to get user: " + ex.Message);
+                    return null;
+                }
+            }
+
             public User ValidateLogin(User user)
             {
                 string query = $"SELECT * FROM [User] WHERE name = @name AND password = @password;";
@@ -243,6 +277,71 @@ namespace Bord.Server.DataAccessLayer
             }
         }
 
+        public class CommentDAL
+        {
+            public void CreateThreadComment(Comment comment)
+            {
+                string query = "INSERT INTO Comment (threadId, userId, postcontent) VALUES (@threadId, @creatorId, @postcontent);";
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@threadId", comment.ThreadId);
+                            command.Parameters.AddWithValue("@creatorId", comment.CreatorId);
+                            command.Parameters.AddWithValue("@postcontent", comment.Content);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to create new comment: " + ex.Message);
+                }
+            }
+            public List<Comment> GetCommentByThreadId(int threadId)
+            {
+                string query = "SELECT * FROM Comment WHERE threadId = @threadId;";
+                List<Comment> comments = new List<Comment>();
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@threadId", threadId);
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    Comment comment = new Comment();
+                                    comment.Id = reader.GetInt32(0);
+                                    comment.ThreadId = reader.GetInt32(1);
+                                    comment.CreatorId = reader.GetInt32(2);
+                                    comment.Content = reader.GetString(3);
+                                    comments.Add(comment);
+                                }
+                            }
+                        }
+                    }
+                    return comments;
+                }
+
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to get comments: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
+
         public class FeedDAL
         {
             public void CreateFeedPost(FeedPost feedpost)
@@ -267,6 +366,7 @@ namespace Bord.Server.DataAccessLayer
                     System.Diagnostics.Debug.WriteLine("Failed to create new feedpost: " + ex.Message);
                 }
             }
+
 
             public List<FeedPost> GetFeedById(int creatorId)
             {
@@ -309,3 +409,5 @@ namespace Bord.Server.DataAccessLayer
         }
     }
 }
+
+

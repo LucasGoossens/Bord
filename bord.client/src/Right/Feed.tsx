@@ -38,7 +38,7 @@ function Feed({ user }: ProfileProps) {
 
     useEffect(() => {
         getPosts();
-    }, [posts]);
+    }, []);
 
 
     const createFeedPost = () => {

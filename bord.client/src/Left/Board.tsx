@@ -37,6 +37,7 @@ function Board({ children, boardId }) {
             }
 
             setThreadArr(data);
+            console.log(data);
         } catch (error) {
             console.error("Error fetching boards:", error);
         }

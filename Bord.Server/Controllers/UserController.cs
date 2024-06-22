@@ -31,5 +31,19 @@ namespace Bord.Server.Controllers
             }
             return BadRequest();
         }
+
+        [HttpGet]
+        [Route("/user/{userId}")]
+        public IActionResult GetUser(int userId)
+        {
+            UserDAL userDAL = new UserDAL();
+            User user = userDAL.GetUserById(userId);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return BadRequest();
+        }
+
     }
 }
