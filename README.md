@@ -1,1 +1,1 @@
-Social media clone for front-end practice
+Social media clone for full-stack practice
