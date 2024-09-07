@@ -23,6 +23,8 @@ function Authorization({ handleLogin, handleRegistration }) {
                 <div className="flex flex-col justify-end items-center bg-slate-100 border border-slate-700 w-1/5 h-2/3 text-white shadow-xl">
                     {view === 'main' && (
                         <>
+                             <div className="font-sans border border-black rounded rounded-lg text-black font-thin text-5xl p-20 border-2 ">bord.</div>
+
                             <button onClick={clickLogin} className="w-11/12 h-1/6 my-2 shadow-xl bg-slate-600 border rounded-xl text-xl text-white">Login</button>
                             <button onClick={clickRegister} className="w-11/12 h-1/6 mb-10 shadow-xl bg-slate-800 border rounded-xl text-xl text-white">Register</button>
                         </>

@@ -14,8 +14,6 @@ interface ThreadCommentProps {
 function ThreadComment({ comment }: ThreadCommentProps) {
 
 
-
-
     return (
         <>
             <div className="p-2 border border-slate-600 my-4">

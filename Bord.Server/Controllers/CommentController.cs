@@ -25,18 +25,21 @@ namespace Bord.Server.Controllers
             return Ok("Comment posted.");
         }
 
-        [HttpPut]
-        [Route("api/comment")]
-        public IActionResult PutComment()
+        [HttpPost]
+        [Route("/feedpost/comment/create")]
+        public IActionResult PostFeedPostComment(FeedPostComment comment)
         {
-            return Ok("PutComment");
+            CommentDAL commentDAL = new CommentDAL();
+            commentDAL.CreateFeedPostComment(comment);
+            return Ok("FeedPost Comment posted.");
         }
 
-        [HttpDelete]
-        [Route("api/comment")]
-        public IActionResult DeleteComment()
+        [HttpGet]
+        [Route("/feedpost/comment/get/{commentId}")]
+        public IActionResult GetFeedPostComment(int commentId)
         {
-            return Ok("DeleteComment");
+            CommentDAL commentDAL = new CommentDAL();
+            return Ok(commentDAL.GetFeedPostCommentsById(commentId));
         }
     }
 }

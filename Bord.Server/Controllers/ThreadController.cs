@@ -20,5 +20,20 @@ namespace Bord.Server.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpDelete]
+        [Route("/thread/delete/{threadId}")]
+        public IActionResult deleteThread(int threadId)
+        {
+            try
+            {
+                ThreadDAL threadDAL = new ThreadDAL();
+                threadDAL.DeleteThread(threadId);
+                return Ok();
+            }catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

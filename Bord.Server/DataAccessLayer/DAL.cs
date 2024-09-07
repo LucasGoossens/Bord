@@ -1,5 +1,6 @@
 ﻿using Bord.Server.Models;
 using System.Data.SqlClient;
+using System.Threading;
 
 namespace Bord.Server.DataAccessLayer
 {
@@ -272,11 +273,55 @@ namespace Bord.Server.DataAccessLayer
                     return null;
                 }
 
-
-
             }
+
+            public void DeleteThread(int threadId)
+            {
+                string deleteCommentsQuery = "DELETE FROM Comment WHERE threadId = @threadId;";
+                string deleteThreadQuery = "DELETE FROM Thread WHERE id = @threadId;";
+
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlTransaction transaction = connection.BeginTransaction())
+                        {
+                            try
+                            {           
+                                using (SqlCommand deleteCommentsCommand = new SqlCommand(deleteCommentsQuery, connection, transaction))
+                                {
+                                    deleteCommentsCommand.Parameters.AddWithValue("@threadId", threadId);
+                                    deleteCommentsCommand.ExecuteNonQuery();
+                                }
+                             
+                                using (SqlCommand deleteThreadCommand = new SqlCommand(deleteThreadQuery, connection, transaction))
+                                {
+                                    deleteThreadCommand.Parameters.AddWithValue("@threadId", threadId);
+                                    deleteThreadCommand.ExecuteNonQuery();
+                                }
+                                
+                                transaction.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                                transaction.Rollback();
+                                System.Diagnostics.Debug.WriteLine("Failed to delete thread and comments: " + ex.Message);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to delete thread and comments: " + ex.Message);
+                }
+            }
+
         }
 
+        // Comments voor threads en feedposts, geen goed idee om dit te doen    
         public class CommentDAL
         {
             public void CreateThreadComment(Comment comment)
@@ -339,6 +384,73 @@ namespace Bord.Server.DataAccessLayer
                     return null;
                 }
             }
+
+            // feedpostcomments
+
+            public void CreateFeedPostComment(FeedPostComment comment)
+            {
+                string query = "INSERT INTO FeedPostComment (feedpostId, creatorId, postcontent) VALUES (@feedpostId, @creatorId, @postcontent);";
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@creatorId", comment.CreatorId);
+                            command.Parameters.AddWithValue("@feedpostId", comment.FeedPostId); 
+                            command.Parameters.AddWithValue("@postcontent", comment.Content);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to create new comment: " + ex.Message);
+                }
+            }
+
+            public List<FeedPostComment> GetFeedPostCommentsById(int id)
+            {
+
+                string query = "SELECT * FROM FeedPostComment WHERE feedpostId = @threadId;";
+                List<FeedPostComment> comments = new List<FeedPostComment>();
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connStr))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@threadId", id);
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    FeedPostComment  comment = new FeedPostComment ();
+                                    comment.Id = (int)reader["Id"];
+                                    comment.FeedPostId = (int)reader["feedpostId"];
+                                    comment.CreatorId = (int)reader["CreatorId"];
+                                    comment.Content = (string)reader["postContent"];
+                                    comments.Add(comment);
+                                }
+                            }
+
+                        }
+                    }
+                    return comments;
+                }
+
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to get comments: " + ex.Message);
+                    return null;
+                }
+            }
+
         }
 
 

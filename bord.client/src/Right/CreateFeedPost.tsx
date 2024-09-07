@@ -30,19 +30,20 @@ function CreateFeedPost({ open, onClose }) {
     return (
         <>
             <div onClick={onClose} className={`text-white z-50 fixed inset-0 flex justify-center items-center ${open ? 'visible bg-black/70' : 'invisible'}`}>
-                <div className="w-1/4 flex m-2 justify-center relative bg-slate-600 p-4 rounded shadow-lg" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={onClose} className="absolute right-2 top-2 px-2 py-1 bg-red-600 rounded hover:bg-red-500">Close</button>
+                <div className="w-1/3 flex m-2 justify-center relative bg-slate-600 p-8 rounded rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
+                    <button onClick={onClose} className="absolute right-3 top-2 px-2 py-1 bg-red-600 rounded hover:bg-red-500">X</button>
                     <form onSubmit={handleSubmit}>                       
-                        <label >
+                        <label>
                             Content<br />
                             <textarea
+                            maxLength="300"
                                 name="content"
-                                className="h-40 w-96 bg-slate-500 text-white p-2 max-h-96"
+                                className="h-40 w-96 m-2 border-y border-slate-900 bg-slate-500 text-white p-2 max-h-96"
                                 required
                             ></textarea>
 
                         </label><br />
-                        <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-blue-600 rounded hover:bg-blue-500" />
+                        <input type="submit" value="Submit" className="absolute right-16 px-4 py-1 rounded hover:bg-blue-500" />
                     </form>
                 </div>
             </div>

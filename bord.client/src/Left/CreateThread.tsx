@@ -55,6 +55,7 @@ function CreateThread({ open, onClose, boardId }: CreateThreadModalProps) {
                         <label >
                             OP<br />
                             <textarea
+                            maxLength="2000"
                                 name="content"
                                 className="h-40 w-96 bg-slate-500 text-white p-2 max-h-96"
                                 required
